@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/neilsmahajan/snake/internal/board"
+	"github.com/neilsmahajan/snake/internal/input"
 	"github.com/neilsmahajan/snake/internal/snake"
 )
 
@@ -24,8 +25,8 @@ var gameOver = false
 func main() {
 	for !gameOver {
 		board.DrawBoard(width, height, snakePositionX, snakePositionY)
+		direction, gameOver = input.GetUserInput(direction)
 		snakePositionX, snakePositionY, gameOver = snake.MoveSnake(snakePositionX, snakePositionY, width, height, direction)
-		// Simulate a delay for the snake movement
 		time.Sleep(200 * time.Millisecond)
 	}
 }
