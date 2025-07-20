@@ -1,20 +1,26 @@
 package input
 
-import "fmt"
+import (
+	"fmt"
 
-func GetUserInput(direction string) (string, bool) {
-	var input string
-	fmt.Scanln(&input)
-	if (input == "w" || input == "k") && direction != "down" {
-		return "up", false
-	} else if (input == "s" || input == "j") && direction != "up" {
-		return "down", false
-	} else if (input == "a" || input == "h") && direction != "right" {
-		return "left", false
-	} else if (input == "d" || input == "l") && direction != "left" {
-		return "right", false
-	} else if input == "q" || input == "Q" {
-		return direction, true // Return the current direction and indicate game over
+	"github.com/eiannone/keyboard"
+)
+
+func GetUserInput(direction string) (string, bool, error) {
+	char, _, err := keyboard.GetSingleKey()
+	if err != nil {
+		return direction, true, fmt.Errorf("Error reading input: %v", err)
 	}
-	return direction, false // Return the current direction and indicate game continues
+	if (char == 'w' || char == 'k') && direction != "down" {
+		return "up", true, nil
+	} else if (char == 's' || char == 'j') && direction != "up" {
+		return "down", true, nil
+	} else if (char == 'a' || char == 'h') && direction != "right" {
+		return "left", true, nil
+	} else if (char == 'd' || char == 'l') && direction != "left" {
+		return "right", true, nil
+	} else if char == 'q' || char == 'Q' {
+		return direction, false, nil // Return the current direction and indicate game over
+	}
+	return direction, true, nil // Return the current direction and indicate game continues
 }

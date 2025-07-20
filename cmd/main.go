@@ -20,13 +20,17 @@ var (
 
 var direction = "right"
 
-var gameOver = false
+var gamePlaying = true
 
 func main() {
-	for !gameOver {
+	for gamePlaying {
 		board.DrawBoard(width, height, snakePositionX, snakePositionY)
-		direction, gameOver = input.GetUserInput(direction)
-		snakePositionX, snakePositionY, gameOver = snake.MoveSnake(snakePositionX, snakePositionY, width, height, direction)
+		var err error
+		direction, gamePlaying, err = input.GetUserInput(direction)
+		if err != nil {
+			panic(err)
+		}
+		snakePositionX, snakePositionY, gamePlaying = snake.MoveSnake(snakePositionX, snakePositionY, width, height, direction)
 		time.Sleep(200 * time.Millisecond)
 	}
 }
