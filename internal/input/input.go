@@ -11,9 +11,7 @@ func GetUserInput(direction string) (string, bool, error) {
 	if err != nil {
 		return direction, false, fmt.Errorf("Error reading input: %v", err)
 	}
-	if key == keyboard.KeyEsc {
-		return direction, false, nil // Return the current direction and indicate game over
-	} else if char == 'q' || char == 'Q' {
+	if key == keyboard.KeyEsc || char == 'q' || char == 'Q' {
 		return direction, false, nil // Return the current direction and indicate game over
 	} else if (char == 'w' || char == 'k') && direction != "down" {
 		return "up", true, nil

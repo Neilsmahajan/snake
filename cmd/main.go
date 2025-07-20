@@ -18,7 +18,7 @@ var (
 	snakePositionY = height / 2
 )
 
-var direction = "right"
+var direction = "still"
 
 var gamePlaying = true
 
