@@ -1,7 +1,10 @@
 package main
 
 import (
+	"time"
+
 	"github.com/neilsmahajan/snake/internal/board"
+	"github.com/neilsmahajan/snake/internal/snake"
 )
 
 const (
@@ -14,6 +17,15 @@ var (
 	snakePositionY = height / 2
 )
 
+var direction = "right"
+
+var gameOver = false
+
 func main() {
-	board.DrawBoard(width, height, snakePositionX, snakePositionY)
+	for !gameOver {
+		board.DrawBoard(width, height, snakePositionX, snakePositionY)
+		snakePositionX, snakePositionY, gameOver = snake.MoveSnake(snakePositionX, snakePositionY, width, height, direction)
+		// Simulate a delay for the snake movement
+		time.Sleep(200 * time.Millisecond)
+	}
 }
