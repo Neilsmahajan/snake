@@ -7,11 +7,15 @@ import (
 )
 
 func GetUserInput(direction string) (string, bool, error) {
-	char, _, err := keyboard.GetSingleKey()
+	char, key, err := keyboard.GetSingleKey()
 	if err != nil {
-		return direction, true, fmt.Errorf("Error reading input: %v", err)
+		return direction, false, fmt.Errorf("Error reading input: %v", err)
 	}
-	if (char == 'w' || char == 'k') && direction != "down" {
+	if key == keyboard.KeyEsc {
+		return direction, false, nil // Return the current direction and indicate game over
+	} else if char == 'q' || char == 'Q' {
+		return direction, false, nil // Return the current direction and indicate game over
+	} else if (char == 'w' || char == 'k') && direction != "down" {
 		return "up", true, nil
 	} else if (char == 's' || char == 'j') && direction != "up" {
 		return "down", true, nil
@@ -19,8 +23,6 @@ func GetUserInput(direction string) (string, bool, error) {
 		return "left", true, nil
 	} else if (char == 'd' || char == 'l') && direction != "left" {
 		return "right", true, nil
-	} else if char == 'q' || char == 'Q' {
-		return direction, false, nil // Return the current direction and indicate game over
 	}
 	return direction, true, nil // Return the current direction and indicate game continues
 }

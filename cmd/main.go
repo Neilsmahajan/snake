@@ -30,6 +30,9 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		if !gamePlaying {
+			break
+		}
 		snakePositionX, snakePositionY, gamePlaying = snake.MoveSnake(snakePositionX, snakePositionY, width, height, direction)
 		time.Sleep(200 * time.Millisecond)
 	}
