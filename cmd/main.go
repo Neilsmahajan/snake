@@ -15,14 +15,14 @@ var gamePlaying = true
 
 func main() {
 	var err error
-	var boardDimensions board.BoardDimensions
-	boardDimensions, speed, err = input.GetDifficultyInput()
+	var brd board.Board
+	brd, speed, err = input.GetDifficultyInput()
 	if err != nil {
 		fmt.Printf("Error getting difficulty input: %v\n", err)
 		return
 	}
 
-	s := snake.NewSnake(boardDimensions)
+	s := snake.NewSnake(brd)
 
 	inputChannel := make(chan input.UserInput)
 	go input.ListenForInput(inputChannel, s)
@@ -30,7 +30,7 @@ func main() {
 	defer ticker.Stop()
 
 	for gamePlaying {
-		board.DrawBoard(boardDimensions, s.OccupiedMap)
+		board.DrawBoard(brd, s.OccupiedMap)
 
 		select {
 		case userInput := <-inputChannel:
@@ -53,6 +53,6 @@ func main() {
 			break
 		}
 
-		gamePlaying = snake.MoveSnake(boardDimensions, s)
+		gamePlaying = snake.MoveSnake(brd, s)
 	}
 }

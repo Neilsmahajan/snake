@@ -4,7 +4,7 @@ import (
 	"github.com/neilsmahajan/snake/internal/board"
 )
 
-func MoveSnake(boardDimensions board.BoardDimensions, s *Snake) bool {
+func MoveSnake(brd board.Board, s *Snake) bool {
 	if s.Direction == "still" {
 		return true // No movement, just return
 	}
@@ -25,8 +25,8 @@ func MoveSnake(boardDimensions board.BoardDimensions, s *Snake) bool {
 		return false // Invalid direction
 	}
 
-	if newHead.SnakePositionX <= 0 || newHead.SnakePositionX >= boardDimensions.Width-1 ||
-		newHead.SnakePositionY <= 0 || newHead.SnakePositionY >= boardDimensions.Height-1 {
+	if newHead.SnakePositionX <= 0 || newHead.SnakePositionX >= brd.Width-1 ||
+		newHead.SnakePositionY <= 0 || newHead.SnakePositionY >= brd.Height-1 {
 		return false // Hit the wall
 	}
 

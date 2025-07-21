@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-type BoardDimensions struct {
+type Board struct {
 	Width  int
 	Height int
 }
@@ -15,11 +15,11 @@ type SnakePoint struct {
 	SnakePositionY int
 }
 
-func DrawBoard(boardDimensions BoardDimensions, occupiedMap map[SnakePoint]*list.Element) {
+func DrawBoard(brd Board, occupiedMap map[SnakePoint]*list.Element) {
 	fmt.Print("\033[H\033[2J") // Clear the console
-	for y := range boardDimensions.Height {
-		for x := range boardDimensions.Width {
-			if x == 0 || x == boardDimensions.Width-1 || y == 0 || y == boardDimensions.Height-1 {
+	for y := range brd.Height {
+		for x := range brd.Width {
+			if x == 0 || x == brd.Width-1 || y == 0 || y == brd.Height-1 {
 				fmt.Print("#")
 			} else if _, exists := occupiedMap[SnakePoint{SnakePositionX: x, SnakePositionY: y}]; exists {
 				fmt.Print("0")
