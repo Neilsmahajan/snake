@@ -44,6 +44,7 @@ func main() {
 				continue
 			}
 			s.Direction = userInput.Direction
+			snake.GrowSnake(s)
 		default:
 			// Do nothing, keep the snake moving
 		}
