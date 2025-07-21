@@ -22,23 +22,15 @@ func main() {
 		return
 	}
 
-	s := snake.Snake{
-		Body: []board.SnakePoint{
-			{
-				SnakePositionX: boardDimensions.Width / 2,
-				SnakePositionY: boardDimensions.Height / 2,
-			},
-		},
-		Direction: "still",
-	}
+	s := snake.NewSnake(boardDimensions)
 
 	inputChannel := make(chan input.UserInput)
-	go input.ListenForInput(inputChannel, &s)
+	go input.ListenForInput(inputChannel, s)
 	ticker := time.NewTicker(time.Duration(speed) * time.Millisecond)
 	defer ticker.Stop()
 
 	for gamePlaying {
-		board.DrawBoard(boardDimensions, s.Body)
+		board.DrawBoard(boardDimensions, s.OccupiedMap)
 
 		select {
 		case userInput := <-inputChannel:
@@ -60,6 +52,6 @@ func main() {
 			break
 		}
 
-		gamePlaying = snake.MoveSnake(boardDimensions, &s)
+		gamePlaying = snake.MoveSnake(boardDimensions, s)
 	}
 }

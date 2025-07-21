@@ -4,49 +4,44 @@ import (
 	"github.com/neilsmahajan/snake/internal/board"
 )
 
-type Snake struct {
-	Body      []board.SnakePoint
-	Direction string
-}
-
-func updateSnakeBody(s *Snake) bool {
-	if len(s.Body) == 1 {
-		return true
-	}
-	// Check for self-collision
-	head := s.Body[len(s.Body)-1]
-	for i := 0; i < len(s.Body)-1; i++ {
-		if s.Body[i].SnakePositionX == head.SnakePositionX && s.Body[i].SnakePositionY == head.SnakePositionY {
-			return false // Game over if the snake collides with itself
-		}
-	}
-	for i := len(s.Body) - 2; i > 0; i-- {
-		s.Body[i].SnakePositionX = s.Body[i-1].SnakePositionX
-		s.Body[i].SnakePositionY = s.Body[i-1].SnakePositionY
-	}
-
-	return true
-}
-
 func MoveSnake(boardDimensions board.BoardDimensions, s *Snake) bool {
-	head := &s.Body[len(s.Body)-1]
+	if s.Direction == "still" {
+		return true // No movement, just return
+	}
+
+	head := s.Body.Front().Value.(board.SnakePoint)
+	var newHead board.SnakePoint
+
 	switch s.Direction {
 	case "up":
-		head.SnakePositionY--
+		newHead = board.SnakePoint{SnakePositionX: head.SnakePositionX, SnakePositionY: head.SnakePositionY - 1}
 	case "down":
-		head.SnakePositionY++
+		newHead = board.SnakePoint{SnakePositionX: head.SnakePositionX, SnakePositionY: head.SnakePositionY + 1}
 	case "left":
-		head.SnakePositionX--
+		newHead = board.SnakePoint{SnakePositionX: head.SnakePositionX - 1, SnakePositionY: head.SnakePositionY}
 	case "right":
-		head.SnakePositionX++
-	case "still":
-		return true // No movement, so the snake is still valid
+		newHead = board.SnakePoint{SnakePositionX: head.SnakePositionX + 1, SnakePositionY: head.SnakePositionY}
+	default:
+		return false // Invalid direction
 	}
-	if head.SnakePositionX <= 0 || head.SnakePositionX >= boardDimensions.Width-1 || head.SnakePositionY <= 0 || head.SnakePositionY >= boardDimensions.Height-1 {
-		return false // Game over if the snake hits the wall
+
+	if newHead.SnakePositionX <= 0 || newHead.SnakePositionX >= boardDimensions.Width-1 ||
+		newHead.SnakePositionY <= 0 || newHead.SnakePositionY >= boardDimensions.Height-1 {
+		return false // Hit the wall
 	}
-	if !updateSnakeBody(s) {
-		return false // Game over if the snake collides with itself
+
+	if _, exists := s.OccupiedMap[newHead]; exists {
+		return false // Hit itself
 	}
+
+	s.Body.PushFront(newHead)
+	s.OccupiedMap[newHead] = s.Body.Front()
+
+	if s.Body.Len() > 1 {
+		tail := s.Body.Back()
+		delete(s.OccupiedMap, tail.Value.(board.SnakePoint))
+		s.Body.Remove(tail)
+	}
+
 	return true
 }

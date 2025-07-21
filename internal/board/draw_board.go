@@ -1,6 +1,7 @@
 package board
 
 import (
+	"container/list"
 	"fmt"
 )
 
@@ -14,13 +15,13 @@ type SnakePoint struct {
 	SnakePositionY int
 }
 
-func DrawBoard(boardDimensions BoardDimensions, body []SnakePoint) {
+func DrawBoard(boardDimensions BoardDimensions, occupiedMap map[SnakePoint]*list.Element) {
 	fmt.Print("\033[H\033[2J") // Clear the console
 	for y := range boardDimensions.Height {
 		for x := range boardDimensions.Width {
 			if x == 0 || x == boardDimensions.Width-1 || y == 0 || y == boardDimensions.Height-1 {
 				fmt.Print("#")
-			} else if x == body[len(body)-1].SnakePositionX && y == body[len(body)-1].SnakePositionY {
+			} else if _, exists := occupiedMap[SnakePoint{SnakePositionX: x, SnakePositionY: y}]; exists {
 				fmt.Print("0")
 			} else {
 				fmt.Print(" ")
