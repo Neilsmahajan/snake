@@ -12,7 +12,7 @@ type UserInput struct {
 	Error       error
 }
 
-func ListenForInput(inputChannel chan<- UserInput) {
+func ListenForInput(inputChannel chan<- UserInput, direction *string) {
 	if err := keyboard.Open(); err != nil {
 		inputChannel <- UserInput{GamePlaying: false, Error: fmt.Errorf("error opening keyboard: %v", err)}
 		return
@@ -31,14 +31,13 @@ func ListenForInput(inputChannel chan<- UserInput) {
 			return
 		}
 
-		switch char {
-		case 'w', 'k':
+		if (char == 'w' || char == 'k') && (*direction != "down") {
 			inputChannel <- UserInput{Direction: "up", GamePlaying: true, Error: nil}
-		case 's', 'j':
+		} else if (char == 's' || char == 'j') && (*direction != "up") {
 			inputChannel <- UserInput{Direction: "down", GamePlaying: true, Error: nil}
-		case 'a', 'h':
+		} else if (char == 'a' || char == 'h') && (*direction != "right") {
 			inputChannel <- UserInput{Direction: "left", GamePlaying: true, Error: nil}
-		case 'd', 'l':
+		} else if (char == 'd' || char == 'l') && (*direction != "left") {
 			inputChannel <- UserInput{Direction: "right", GamePlaying: true, Error: nil}
 		}
 	}

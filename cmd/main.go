@@ -29,7 +29,7 @@ func main() {
 	fmt.Println("Press 'q' or 'Esc' to quit the game.")
 
 	inputChannel := make(chan input.UserInput)
-	go input.ListenForInput(inputChannel)
+	go input.ListenForInput(inputChannel, &direction)
 
 	for gamePlaying {
 		board.DrawBoard(width, height, snakePositionX, snakePositionY)
