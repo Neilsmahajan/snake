@@ -1,22 +1,29 @@
 package snake
 
-import "github.com/neilsmahajan/snake/internal/board"
+import (
+	"github.com/neilsmahajan/snake/internal/board"
+)
 
-func MoveSnake(snakePositionX, snakePositionY int, boardDimensions board.BoardDimensions, direction string) (int, int, bool) {
-	switch direction {
+type Snake struct {
+	SnakePoints []board.SnakePoint
+	Direction   string
+}
+
+func MoveSnake(boardDimensions board.BoardDimensions, s *Snake) bool {
+	switch s.Direction {
 	case "up":
-		snakePositionY--
+		s.SnakePoints[0].SnakePositionY--
 	case "down":
-		snakePositionY++
+		s.SnakePoints[0].SnakePositionY++
 	case "left":
-		snakePositionX--
+		s.SnakePoints[0].SnakePositionX--
 	case "right":
-		snakePositionX++
+		s.SnakePoints[0].SnakePositionX++
 	case "still":
 		// Do nothing, snake stays in the same position
 	}
-	if snakePositionX <= 0 || snakePositionX >= boardDimensions.Width-1 || snakePositionY <= 0 || snakePositionY >= boardDimensions.Height-1 {
-		return snakePositionX, snakePositionY, false // Game over if the snake hits the wall
+	if s.SnakePoints[0].SnakePositionX <= 0 || s.SnakePoints[0].SnakePositionX >= boardDimensions.Width-1 || s.SnakePoints[0].SnakePositionY <= 0 || s.SnakePoints[0].SnakePositionY >= boardDimensions.Height-1 {
+		return false // Game over if the snake hits the wall
 	}
-	return snakePositionX, snakePositionY, true
+	return true
 }

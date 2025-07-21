@@ -9,19 +9,7 @@ import (
 	"github.com/neilsmahajan/snake/internal/snake"
 )
 
-//var (
-//	width  int
-//	height int
-//)
-
 var speed int
-
-var (
-	snakePositionX int
-	snakePositionY int
-)
-
-var direction = "still"
 
 var gamePlaying = true
 
@@ -34,16 +22,23 @@ func main() {
 		return
 	}
 
-	snakePositionX = boardDimensions.Width / 2
-	snakePositionY = boardDimensions.Height / 2
+	s := snake.Snake{
+		SnakePoints: []board.SnakePoint{
+			{
+				SnakePositionX: boardDimensions.Width / 2,
+				SnakePositionY: boardDimensions.Height / 2,
+			},
+		},
+		Direction: "still",
+	}
 
 	inputChannel := make(chan input.UserInput)
-	go input.ListenForInput(inputChannel, &direction)
+	go input.ListenForInput(inputChannel, &s)
 	ticker := time.NewTicker(time.Duration(speed) * time.Millisecond)
 	defer ticker.Stop()
 
 	for gamePlaying {
-		board.DrawBoard(boardDimensions, snakePositionX, snakePositionY)
+		board.DrawBoard(boardDimensions, s.SnakePoints)
 
 		select {
 		case userInput := <-inputChannel:
@@ -56,7 +51,7 @@ func main() {
 				gamePlaying = false
 				continue
 			}
-			direction = userInput.Direction
+			s.Direction = userInput.Direction
 		default:
 			// Do nothing, keep the snake moving
 		}
@@ -65,7 +60,6 @@ func main() {
 			break
 		}
 
-		snakePositionX, snakePositionY, gamePlaying = snake.MoveSnake(snakePositionX, snakePositionY, boardDimensions, direction)
-		// time.Sleep(200 * time.Millisecond)
+		gamePlaying = snake.MoveSnake(boardDimensions, &s)
 	}
 }

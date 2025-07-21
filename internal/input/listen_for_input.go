@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/eiannone/keyboard"
+	"github.com/neilsmahajan/snake/internal/snake"
 )
 
 type UserInput struct {
@@ -12,7 +13,7 @@ type UserInput struct {
 	Error       error
 }
 
-func ListenForInput(inputChannel chan<- UserInput, direction *string) {
+func ListenForInput(inputChannel chan<- UserInput, s *snake.Snake) {
 	if err := keyboard.Open(); err != nil {
 		inputChannel <- UserInput{GamePlaying: false, Error: fmt.Errorf("error opening keyboard: %v", err)}
 		return
@@ -31,13 +32,13 @@ func ListenForInput(inputChannel chan<- UserInput, direction *string) {
 			return
 		}
 
-		if (char == 'w' || char == 'k') && (*direction != "down") {
+		if (char == 'w' || char == 'k') && (s.Direction != "down") {
 			inputChannel <- UserInput{Direction: "up", GamePlaying: true, Error: nil}
-		} else if (char == 's' || char == 'j') && (*direction != "up") {
+		} else if (char == 's' || char == 'j') && (s.Direction != "up") {
 			inputChannel <- UserInput{Direction: "down", GamePlaying: true, Error: nil}
-		} else if (char == 'a' || char == 'h') && (*direction != "right") {
+		} else if (char == 'a' || char == 'h') && (s.Direction != "right") {
 			inputChannel <- UserInput{Direction: "left", GamePlaying: true, Error: nil}
-		} else if (char == 'd' || char == 'l') && (*direction != "left") {
+		} else if (char == 'd' || char == 'l') && (s.Direction != "left") {
 			inputChannel <- UserInput{Direction: "right", GamePlaying: true, Error: nil}
 		}
 	}
