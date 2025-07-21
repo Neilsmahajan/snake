@@ -9,14 +9,16 @@ import (
 	"github.com/neilsmahajan/snake/internal/snake"
 )
 
-const (
-	width  = 20
-	height = 10
+var (
+	width  int
+	height int
 )
 
+var speed int
+
 var (
-	snakePositionX = width / 2
-	snakePositionY = height / 2
+	snakePositionX int
+	snakePositionY int
 )
 
 var direction = "still"
@@ -24,9 +26,14 @@ var direction = "still"
 var gamePlaying = true
 
 func main() {
-	fmt.Println("Welcome to the Snake Game!")
-	fmt.Println("Use 'w' or 'k' to move up, 's' or 'j' to move down, 'a' or 'h' to move left, 'd' or 'l' to move right.")
-	fmt.Println("Press 'q' or 'Esc' to quit the game.")
+	var err error
+	width, height, speed, err = input.GetDifficultyInput()
+	if err != nil {
+		fmt.Printf("Error getting difficulty input: %v\n", err)
+		return
+	}
+	snakePositionX = width / 2
+	snakePositionY = height / 2
 
 	inputChannel := make(chan input.UserInput)
 	go input.ListenForInput(inputChannel, &direction)
