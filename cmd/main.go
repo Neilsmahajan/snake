@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/neilsmahajan/snake/internal/board"
@@ -25,14 +26,20 @@ var gamePlaying = true
 func main() {
 	for gamePlaying {
 		board.DrawBoard(width, height, snakePositionX, snakePositionY)
-		var err error
-		direction, gamePlaying, err = input.GetUserInput(direction)
-		if err != nil {
-			panic(err)
+		inputChannel := make(chan input.UserInput)
+		go input.GetUserInput(direction, inputChannel)
+		userInput := <-inputChannel
+		if userInput.Error != nil {
+			fmt.Printf("Error reading input: %v\n", userInput.Error)
 		}
-		if !gamePlaying {
-			break
+		if !userInput.GamePlaying {
+			gamePlaying = false
+			continue
 		}
+		direction = userInput.Direction
+		//if !gamePlaying {
+		//	break
+		//}
 		snakePositionX, snakePositionY, gamePlaying = snake.MoveSnake(snakePositionX, snakePositionY, width, height, direction)
 		time.Sleep(200 * time.Millisecond)
 	}

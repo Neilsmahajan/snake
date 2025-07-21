@@ -6,21 +6,27 @@ import (
 	"github.com/eiannone/keyboard"
 )
 
-func GetUserInput(direction string) (string, bool, error) {
+type UserInput struct {
+	Direction   string
+	GamePlaying bool
+	Error       error
+}
+
+func GetUserInput(direction string, inputChannel chan<- UserInput) {
 	char, key, err := keyboard.GetSingleKey()
 	if err != nil {
-		return direction, false, fmt.Errorf("Error reading input: %v", err)
-	}
-	if key == keyboard.KeyEsc || char == 'q' || char == 'Q' {
-		return direction, false, nil // Return the current direction and indicate game over
+		inputChannel <- UserInput{Direction: direction, GamePlaying: false, Error: fmt.Errorf("Error reading input: %v", err)}
+	} else if key == keyboard.KeyEsc || char == 'q' || char == 'Q' {
+		inputChannel <- UserInput{Direction: direction, GamePlaying: false, Error: nil}
 	} else if (char == 'w' || char == 'k') && direction != "down" {
-		return "up", true, nil
+		inputChannel <- UserInput{Direction: "up", GamePlaying: true, Error: nil}
 	} else if (char == 's' || char == 'j') && direction != "up" {
-		return "down", true, nil
+		inputChannel <- UserInput{Direction: "down", GamePlaying: true, Error: nil}
 	} else if (char == 'a' || char == 'h') && direction != "right" {
-		return "left", true, nil
+		inputChannel <- UserInput{Direction: "left", GamePlaying: true, Error: nil}
 	} else if (char == 'd' || char == 'l') && direction != "left" {
-		return "right", true, nil
+		inputChannel <- UserInput{Direction: "right", GamePlaying: true, Error: nil}
+	} else {
+		inputChannel <- UserInput{Direction: direction, GamePlaying: true, Error: nil}
 	}
-	return direction, true, nil // Return the current direction and indicate game continues
 }
