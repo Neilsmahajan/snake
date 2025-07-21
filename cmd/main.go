@@ -9,10 +9,10 @@ import (
 	"github.com/neilsmahajan/snake/internal/snake"
 )
 
-var (
-	width  int
-	height int
-)
+//var (
+//	width  int
+//	height int
+//)
 
 var speed int
 
@@ -27,13 +27,15 @@ var gamePlaying = true
 
 func main() {
 	var err error
-	width, height, speed, err = input.GetDifficultyInput()
+	var boardDimensions board.BoardDimensions
+	boardDimensions, speed, err = input.GetDifficultyInput()
 	if err != nil {
 		fmt.Printf("Error getting difficulty input: %v\n", err)
 		return
 	}
-	snakePositionX = width / 2
-	snakePositionY = height / 2
+
+	snakePositionX = boardDimensions.Width / 2
+	snakePositionY = boardDimensions.Height / 2
 
 	inputChannel := make(chan input.UserInput)
 	go input.ListenForInput(inputChannel, &direction)
@@ -41,7 +43,7 @@ func main() {
 	defer ticker.Stop()
 
 	for gamePlaying {
-		board.DrawBoard(width, height, snakePositionX, snakePositionY)
+		board.DrawBoard(boardDimensions, snakePositionX, snakePositionY)
 
 		select {
 		case userInput := <-inputChannel:
@@ -63,7 +65,7 @@ func main() {
 			break
 		}
 
-		snakePositionX, snakePositionY, gamePlaying = snake.MoveSnake(snakePositionX, snakePositionY, width, height, direction)
+		snakePositionX, snakePositionY, gamePlaying = snake.MoveSnake(snakePositionX, snakePositionY, boardDimensions, direction)
 		// time.Sleep(200 * time.Millisecond)
 	}
 }

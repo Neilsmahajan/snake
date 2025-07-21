@@ -2,11 +2,16 @@ package board
 
 import "fmt"
 
-func DrawBoard(width, height, snakePositionX, snakePositionY int) {
+type BoardDimensions struct {
+	Width  int
+	Height int
+}
+
+func DrawBoard(boardDimensions BoardDimensions, snakePositionX, snakePositionY int) {
 	fmt.Print("\033[H\033[2J") // Clear the console
-	for y := range height {
-		for x := range width {
-			if x == 0 || x == width-1 || y == 0 || y == height-1 {
+	for y := range boardDimensions.Height {
+		for x := range boardDimensions.Width {
+			if x == 0 || x == boardDimensions.Width-1 || y == 0 || y == boardDimensions.Height-1 {
 				fmt.Print("#")
 			} else if x == snakePositionX && y == snakePositionY {
 				fmt.Print("0")

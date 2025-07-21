@@ -1,6 +1,8 @@
 package snake
 
-func MoveSnake(snakePositionX, snakePositionY, width, height int, direction string) (int, int, bool) {
+import "github.com/neilsmahajan/snake/internal/board"
+
+func MoveSnake(snakePositionX, snakePositionY int, boardDimensions board.BoardDimensions, direction string) (int, int, bool) {
 	switch direction {
 	case "up":
 		snakePositionY--
@@ -13,7 +15,7 @@ func MoveSnake(snakePositionX, snakePositionY, width, height int, direction stri
 	case "still":
 		// Do nothing, snake stays in the same position
 	}
-	if snakePositionX <= 0 || snakePositionX >= width-1 || snakePositionY <= 0 || snakePositionY >= height-1 {
+	if snakePositionX <= 0 || snakePositionX >= boardDimensions.Width-1 || snakePositionY <= 0 || snakePositionY >= boardDimensions.Height-1 {
 		return snakePositionX, snakePositionY, false // Game over if the snake hits the wall
 	}
 	return snakePositionX, snakePositionY, true
