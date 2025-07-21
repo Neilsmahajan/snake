@@ -23,7 +23,7 @@ func main() {
 	}
 
 	s := snake.Snake{
-		SnakePoints: []board.SnakePoint{
+		Body: []board.SnakePoint{
 			{
 				SnakePositionX: boardDimensions.Width / 2,
 				SnakePositionY: boardDimensions.Height / 2,
@@ -38,7 +38,7 @@ func main() {
 	defer ticker.Stop()
 
 	for gamePlaying {
-		board.DrawBoard(boardDimensions, s.SnakePoints)
+		board.DrawBoard(boardDimensions, s.Body)
 
 		select {
 		case userInput := <-inputChannel:
