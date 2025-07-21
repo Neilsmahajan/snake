@@ -20,7 +20,7 @@ func DrawBoard(boardDimensions BoardDimensions, body []SnakePoint) {
 		for x := range boardDimensions.Width {
 			if x == 0 || x == boardDimensions.Width-1 || y == 0 || y == boardDimensions.Height-1 {
 				fmt.Print("#")
-			} else if x == body[0].SnakePositionX && y == body[0].SnakePositionY {
+			} else if x == body[len(body)-1].SnakePositionX && y == body[len(body)-1].SnakePositionY {
 				fmt.Print("0")
 			} else {
 				fmt.Print(" ")

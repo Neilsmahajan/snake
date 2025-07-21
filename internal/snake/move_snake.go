@@ -10,19 +10,20 @@ type Snake struct {
 }
 
 func MoveSnake(boardDimensions board.BoardDimensions, s *Snake) bool {
+	head := &s.Body[len(s.Body)-1]
 	switch s.Direction {
 	case "up":
-		s.Body[0].SnakePositionY--
+		head.SnakePositionY--
 	case "down":
-		s.Body[0].SnakePositionY++
+		head.SnakePositionY++
 	case "left":
-		s.Body[0].SnakePositionX--
+		head.SnakePositionX--
 	case "right":
-		s.Body[0].SnakePositionX++
+		head.SnakePositionX++
 	case "still":
-		// Do nothing, snake stays in the same position
+		return true // No movement, so the snake is still valid
 	}
-	if s.Body[0].SnakePositionX <= 0 || s.Body[0].SnakePositionX >= boardDimensions.Width-1 || s.Body[0].SnakePositionY <= 0 || s.Body[0].SnakePositionY >= boardDimensions.Height-1 {
+	if head.SnakePositionX <= 0 || head.SnakePositionX >= boardDimensions.Width-1 || head.SnakePositionY <= 0 || head.SnakePositionY >= boardDimensions.Height-1 {
 		return false // Game over if the snake hits the wall
 	}
 	return true
