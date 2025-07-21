@@ -37,6 +37,8 @@ func main() {
 
 	inputChannel := make(chan input.UserInput)
 	go input.ListenForInput(inputChannel, &direction)
+	ticker := time.NewTicker(time.Duration(speed) * time.Millisecond)
+	defer ticker.Stop()
 
 	for gamePlaying {
 		board.DrawBoard(width, height, snakePositionX, snakePositionY)
@@ -57,7 +59,11 @@ func main() {
 			// Do nothing, keep the snake moving
 		}
 
+		if <-ticker.C; !gamePlaying {
+			break
+		}
+
 		snakePositionX, snakePositionY, gamePlaying = snake.MoveSnake(snakePositionX, snakePositionY, width, height, direction)
-		time.Sleep(200 * time.Millisecond)
+		// time.Sleep(200 * time.Millisecond)
 	}
 }
