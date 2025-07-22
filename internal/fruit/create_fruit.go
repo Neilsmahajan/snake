@@ -15,8 +15,10 @@ func CreateFruit(brd *types.Board, occupiedMap map[types.Point]*list.Element) {
 			X: rand.Intn(brd.Width),
 			Y: rand.Intn(brd.Height),
 		}
-		// Check if the new fruit is not occupied by the snake
-		if _, exists := occupiedMap[newFruit]; !exists {
+		// Check if the new fruit is not occupied by the snake and not already in a fruit position
+		_, existsInSnake := occupiedMap[newFruit]
+		_, existsInFruits := brd.Fruits[newFruit]
+		if !existsInSnake || !existsInFruits {
 			break
 		}
 	}
