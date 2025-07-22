@@ -28,9 +28,11 @@ func main() {
 	fruit.CreateFruit(&brd, s.OccupiedMap)
 
 	inputChannel := make(chan types.UserInput)
-	go input.ListenForInput(inputChannel, s)
+	stopChannel := make(chan struct{})
+	go input.ListenForInput(inputChannel, s, stopChannel)
 	ticker := time.NewTicker(time.Duration(speed) * time.Millisecond)
 	defer ticker.Stop()
+	defer close(stopChannel) // Ensure we signal the goroutine to stop
 
 	for gamePlaying {
 		board.DrawBoard(&brd, s)
@@ -55,7 +57,7 @@ func main() {
 			break
 		}
 
-		gamePlaying = snake.MoveSnake(brd, s)
+		gamePlaying = snake.MoveSnake(&brd, s)
 	}
 	fmt.Println("Game Over! Thanks for playing!")
 	if brd.Score > 0 {

@@ -1,10 +1,11 @@
 package snake
 
 import (
+	"github.com/neilsmahajan/snake/internal/fruit"
 	"github.com/neilsmahajan/snake/internal/types"
 )
 
-func MoveSnake(brd types.Board, s *types.Snake) bool {
+func MoveSnake(brd *types.Board, s *types.Snake) bool {
 	if s.Direction == "still" {
 		return true // No movement, just return
 	}
@@ -34,10 +35,21 @@ func MoveSnake(brd types.Board, s *types.Snake) bool {
 		return false // Hit itself
 	}
 
+	// Check if snake eats fruit
+	if _, exists := brd.Fruits[newHead]; exists {
+		delete(brd.Fruits, newHead)
+		fruit.CreateFruit(brd, s.OccupiedMap)
+		brd.Score++
+		s.ShouldGrow = true
+	}
+
 	s.Body.PushFront(newHead)
 	s.OccupiedMap[newHead] = s.Body.Front()
 
-	if s.Body.Len() > 1 {
+	// Only remove tail if snake shouldn't grow
+	if s.ShouldGrow {
+		s.ShouldGrow = false // Reset the grow flag
+	} else if s.Body.Len() > 1 {
 		tail := s.Body.Back()
 		delete(s.OccupiedMap, tail.Value.(types.Point))
 		s.Body.Remove(tail)
