@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/neilsmahajan/snake/internal/board"
+	"github.com/neilsmahajan/snake/internal/fruit"
 	"github.com/neilsmahajan/snake/internal/input"
 	"github.com/neilsmahajan/snake/internal/snake"
 )
@@ -30,7 +31,7 @@ func main() {
 	defer ticker.Stop()
 
 	for gamePlaying {
-		board.DrawBoard(brd, s.OccupiedMap)
+		board.DrawBoard(&brd, s.OccupiedMap)
 
 		select {
 		case userInput := <-inputChannel:
@@ -45,6 +46,7 @@ func main() {
 			}
 			s.Direction = userInput.Direction
 			snake.GrowSnake(s)
+			fruit.CreateFruit(&brd, s.OccupiedMap)
 		default:
 			// Do nothing, keep the snake moving
 		}
