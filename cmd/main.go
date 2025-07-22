@@ -32,7 +32,7 @@ func main() {
 	defer ticker.Stop()
 
 	for gamePlaying {
-		board.DrawBoard(&brd, s.OccupiedMap)
+		board.DrawBoard(&brd, s)
 
 		select {
 		case userInput := <-inputChannel:
@@ -46,7 +46,7 @@ func main() {
 				continue
 			}
 			s.Direction = userInput.Direction
-			snake.GrowSnake(s)
+			// snake.GrowSnake(s)
 			fruit.CreateFruit(&brd, s.OccupiedMap)
 		default:
 			// Do nothing, keep the snake moving
