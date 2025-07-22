@@ -3,6 +3,7 @@ package board
 import (
 	"fmt"
 
+	"github.com/neilsmahajan/snake/internal/fruit"
 	"github.com/neilsmahajan/snake/internal/snake"
 	"github.com/neilsmahajan/snake/internal/types"
 )
@@ -18,6 +19,7 @@ func DrawBoard(brd *types.Board, s *types.Snake) {
 				if _, exists := brd.Fruits[types.Point{X: x, Y: y}]; exists {
 					delete(brd.Fruits, types.Point{X: x, Y: y})
 					snake.GrowSnake(s)
+					fruit.CreateFruit(brd, s.OccupiedMap)
 					brd.Score++
 				}
 				fmt.Print("O")

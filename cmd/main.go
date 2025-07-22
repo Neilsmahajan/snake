@@ -25,6 +25,7 @@ func main() {
 	}
 
 	s := snake.NewSnake(brd)
+	fruit.CreateFruit(&brd, s.OccupiedMap)
 
 	inputChannel := make(chan types.UserInput)
 	go input.ListenForInput(inputChannel, s)
@@ -46,8 +47,6 @@ func main() {
 				continue
 			}
 			s.Direction = userInput.Direction
-			// snake.GrowSnake(s)
-			fruit.CreateFruit(&brd, s.OccupiedMap)
 		default:
 			// Do nothing, keep the snake moving
 		}
