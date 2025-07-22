@@ -14,6 +14,8 @@ import (
 	"github.com/neilsmahajan/snake/internal/types"
 )
 
+const terminalResetDelay = 50 * time.Millisecond
+
 var speed int
 
 var gamePlaying = true
@@ -57,9 +59,9 @@ func main() {
 	ticker := time.NewTicker(time.Duration(speed) * time.Millisecond)
 	defer ticker.Stop()
 	defer func() {
-		close(stopChannel)                // Signal the goroutine to stop
-		wg.Wait()                         // Wait for the goroutine to finish
-		time.Sleep(50 * time.Millisecond) // Give the terminal time to reset
+		close(stopChannel)             // Signal the goroutine to stop
+		wg.Wait()                      // Wait for the goroutine to finish
+		time.Sleep(terminalResetDelay) // Give the terminal time to reset
 	}()
 
 	for gamePlaying {

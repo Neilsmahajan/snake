@@ -7,6 +7,13 @@ import (
 	"github.com/neilsmahajan/snake/internal/types"
 )
 
+const (
+	directionUp    = "up"
+	directionDown  = "down"
+	directionLeft  = "left"
+	directionRight = "right"
+)
+
 func ListenForInput(inputChannel chan<- types.UserInput, s *types.Snake, stopChannel <-chan struct{}) {
 	if err := keyboard.Open(); err != nil {
 		inputChannel <- types.UserInput{GamePlaying: false, Error: fmt.Errorf("error opening keyboard: %v", err)}
@@ -39,20 +46,20 @@ func handleInput(char rune, key keyboard.Key, inputChannel chan<- types.UserInpu
 	var direction string
 	switch char {
 	case 'w', 'k':
-		if s.Direction != "down" {
-			direction = "up"
+		if s.Direction != directionDown {
+			direction = directionUp
 		}
 	case 's', 'j':
-		if s.Direction != "up" {
-			direction = "down"
+		if s.Direction != directionUp {
+			direction = directionDown
 		}
 	case 'a', 'h':
-		if s.Direction != "right" {
-			direction = "left"
+		if s.Direction != directionRight {
+			direction = directionLeft
 		}
 	case 'd', 'l':
-		if s.Direction != "left" {
-			direction = "right"
+		if s.Direction != directionLeft {
+			direction = directionRight
 		}
 	}
 
