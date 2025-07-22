@@ -8,6 +8,7 @@ import (
 	"github.com/neilsmahajan/snake/internal/fruit"
 	"github.com/neilsmahajan/snake/internal/input"
 	"github.com/neilsmahajan/snake/internal/snake"
+	"github.com/neilsmahajan/snake/internal/types"
 )
 
 var speed int
@@ -16,7 +17,7 @@ var gamePlaying = true
 
 func main() {
 	var err error
-	var brd board.Board
+	var brd types.Board
 	brd, speed, err = input.GetDifficultyInput()
 	if err != nil {
 		fmt.Printf("Error getting difficulty input: %v\n", err)
@@ -25,7 +26,7 @@ func main() {
 
 	s := snake.NewSnake(brd)
 
-	inputChannel := make(chan input.UserInput)
+	inputChannel := make(chan types.UserInput)
 	go input.ListenForInput(inputChannel, s)
 	ticker := time.NewTicker(time.Duration(speed) * time.Millisecond)
 	defer ticker.Stop()

@@ -4,19 +4,19 @@ import (
 	"container/list"
 	"math/rand"
 
-	"github.com/neilsmahajan/snake/internal/board"
+	"github.com/neilsmahajan/snake/internal/types"
 )
 
-func CreateFruit(brd *board.Board, occupiedMap map[board.SnakePoint]*list.Element) {
+func CreateFruit(brd *types.Board, occupiedMap map[types.Point]*list.Element) {
 	// Create a new fruit at a random position on the board that is not occupied by the snake
-	var newFruit board.FruitCoordinate
+	var newFruit types.Point
 	for {
-		newFruit = board.FruitCoordinate{
-			FruitPositionX: rand.Intn(brd.Width),
-			FruitPositionY: rand.Intn(brd.Height),
+		newFruit = types.Point{
+			X: rand.Intn(brd.Width),
+			Y: rand.Intn(brd.Height),
 		}
 		// Check if the new fruit is not occupied by the snake
-		if _, exists := occupiedMap[board.SnakePoint{SnakePositionX: newFruit.FruitPositionX, SnakePositionY: newFruit.FruitPositionY}]; !exists {
+		if _, exists := occupiedMap[newFruit]; !exists {
 			break
 		}
 	}

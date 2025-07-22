@@ -1,32 +1,32 @@
 package snake
 
 import (
-	"github.com/neilsmahajan/snake/internal/board"
+	"github.com/neilsmahajan/snake/internal/types"
 )
 
-func MoveSnake(brd board.Board, s *Snake) bool {
+func MoveSnake(brd types.Board, s *types.Snake) bool {
 	if s.Direction == "still" {
 		return true // No movement, just return
 	}
 
-	head := s.Body.Front().Value.(board.SnakePoint)
-	var newHead board.SnakePoint
+	head := s.Body.Front().Value.(types.Point)
+	var newHead types.Point
 
 	switch s.Direction {
 	case "up":
-		newHead = board.SnakePoint{SnakePositionX: head.SnakePositionX, SnakePositionY: head.SnakePositionY - 1}
+		newHead = types.Point{X: head.X, Y: head.Y - 1}
 	case "down":
-		newHead = board.SnakePoint{SnakePositionX: head.SnakePositionX, SnakePositionY: head.SnakePositionY + 1}
+		newHead = types.Point{X: head.X, Y: head.Y + 1}
 	case "left":
-		newHead = board.SnakePoint{SnakePositionX: head.SnakePositionX - 1, SnakePositionY: head.SnakePositionY}
+		newHead = types.Point{X: head.X - 1, Y: head.Y}
 	case "right":
-		newHead = board.SnakePoint{SnakePositionX: head.SnakePositionX + 1, SnakePositionY: head.SnakePositionY}
+		newHead = types.Point{X: head.X + 1, Y: head.Y}
 	default:
 		return false // Invalid direction
 	}
 
-	if newHead.SnakePositionX <= 0 || newHead.SnakePositionX >= brd.Width-1 ||
-		newHead.SnakePositionY <= 0 || newHead.SnakePositionY >= brd.Height-1 {
+	if newHead.X <= 0 || newHead.X >= brd.Width-1 ||
+		newHead.Y <= 0 || newHead.Y >= brd.Height-1 {
 		return false // Hit the wall
 	}
 
@@ -39,7 +39,7 @@ func MoveSnake(brd board.Board, s *Snake) bool {
 
 	if s.Body.Len() > 1 {
 		tail := s.Body.Back()
-		delete(s.OccupiedMap, tail.Value.(board.SnakePoint))
+		delete(s.OccupiedMap, tail.Value.(types.Point))
 		s.Body.Remove(tail)
 	}
 

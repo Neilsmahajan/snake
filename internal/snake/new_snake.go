@@ -3,22 +3,16 @@ package snake
 import (
 	"container/list"
 
-	"github.com/neilsmahajan/snake/internal/board"
+	"github.com/neilsmahajan/snake/internal/types"
 )
 
-type Snake struct {
-	Body        *list.List                         // head = Front(), tail = Back()
-	OccupiedMap map[board.SnakePoint]*list.Element // Maps snake points to their list elements for quick access
-	Direction   string
-}
-
-func NewSnake(brd board.Board) *Snake {
-	s := &Snake{
+func NewSnake(brd types.Board) *types.Snake {
+	s := &types.Snake{
 		Body:        list.New(),
-		OccupiedMap: make(map[board.SnakePoint]*list.Element),
+		OccupiedMap: make(map[types.Point]*list.Element),
 		Direction:   "still",
 	}
-	start := board.SnakePoint{SnakePositionX: brd.Width / 2, SnakePositionY: brd.Height / 2}
+	start := types.Point{X: brd.Width / 2, Y: brd.Height / 2}
 	e := s.Body.PushFront(start)
 	s.OccupiedMap[start] = e
 	return s
