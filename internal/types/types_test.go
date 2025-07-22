@@ -139,7 +139,7 @@ func BenchmarkPointCreation(b *testing.B) {
 // Benchmark for map operations with Point as key
 func BenchmarkPointMapOperations(b *testing.B) {
 	m := make(map[Point]struct{})
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		p := Point{X: i % 100, Y: (i * 2) % 100}

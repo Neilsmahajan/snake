@@ -3,11 +3,15 @@ package fruit
 import (
 	"container/list"
 	"math/rand"
+	"time"
 
 	"github.com/neilsmahajan/snake/internal/types"
 )
 
 func CreateFruit(brd *types.Board, occupiedMap map[types.Point]*list.Element) {
+	// Seed the random number generator for better randomness
+	rand.Seed(time.Now().UnixNano())
+
 	// Create a new fruit at a random position on the board that is not occupied by the snake
 	var newFruit types.Point
 	for {

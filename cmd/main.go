@@ -27,14 +27,14 @@ func resetTerminal() {
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-		cmd.Run()
+		_ = cmd.Run() // Ignore error as this is best effort cleanup
 	}
 }
 
 func main() {
 	// Ensure terminal is reset when program exits
 	defer resetTerminal()
-	
+
 	var err error
 	var brd types.Board
 	brd, speed, err = input.GetDifficultyInput()
@@ -57,8 +57,8 @@ func main() {
 	ticker := time.NewTicker(time.Duration(speed) * time.Millisecond)
 	defer ticker.Stop()
 	defer func() {
-		close(stopChannel) // Signal the goroutine to stop
-		wg.Wait()          // Wait for the goroutine to finish
+		close(stopChannel)                // Signal the goroutine to stop
+		wg.Wait()                         // Wait for the goroutine to finish
 		time.Sleep(50 * time.Millisecond) // Give the terminal time to reset
 	}()
 
@@ -77,15 +77,12 @@ func main() {
 				continue
 			}
 			s.Direction = userInput.Direction
-		default:
-			// Do nothing, keep the snake moving
+		case <-ticker.C:
+			if !gamePlaying {
+				break
+			}
+			gamePlaying = snake.MoveSnake(&brd, s)
 		}
-
-		if <-ticker.C; !gamePlaying {
-			break
-		}
-
-		gamePlaying = snake.MoveSnake(&brd, s)
 	}
 	fmt.Println("Game Over! Thanks for playing!")
 	if brd.Score > 0 {

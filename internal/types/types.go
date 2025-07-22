@@ -18,10 +18,10 @@ type Board struct {
 
 // Snake represents the snake in the game
 type Snake struct {
-	Body        *list.List                // head = Front(), tail = Back()
-	OccupiedMap map[Point]*list.Element   // Maps snake points to their list elements for quick access
+	Body        *list.List              // head = Front(), tail = Back()
+	OccupiedMap map[Point]*list.Element // Maps snake points to their list elements for quick access
 	Direction   string
-	ShouldGrow  bool                      // Flag to indicate if snake should grow on next move
+	ShouldGrow  bool // Flag to indicate if snake should grow on next move
 }
 
 // UserInput represents input from the user

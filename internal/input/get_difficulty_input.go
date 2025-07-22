@@ -16,7 +16,9 @@ func GetDifficultyInput() (types.Board, int, error) {
 
 	fmt.Println("Please enter the board size ([s]mall, [m]edium, [l]arge):")
 	var size string
-	fmt.Scanln(&size)
+	if _, err := fmt.Scanln(&size); err != nil {
+		return types.Board{}, 0, fmt.Errorf("error reading size input: %v", err)
+	}
 
 	switch size {
 	case "s":
@@ -30,7 +32,9 @@ func GetDifficultyInput() (types.Board, int, error) {
 	}
 	fmt.Println("Please enter the speed ([s]low, [m]edium, [f]ast):")
 	var speedInput string
-	fmt.Scanln(&speedInput)
+	if _, err := fmt.Scanln(&speedInput); err != nil {
+		return types.Board{}, 0, fmt.Errorf("error reading speed input: %v", err)
+	}
 	switch speedInput {
 	case "s":
 		speed = 200

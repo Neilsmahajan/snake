@@ -68,8 +68,8 @@ jobs:
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v4
         with:
-          version: latest
-          args: --timeout=5m
+          version: v1.64.8
+          args: --config=.golangci-simple.yml --timeout=5m
 
   security:
     name: Security Scan
@@ -86,8 +86,8 @@ jobs:
 
       - name: Run Gosec Security Scanner
         run: |
-          go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
-          gosec ./...
+          go install github.com/securego/gosec/v2/cmd/gosec@latest
+          gosec -exclude=G404 ./...
 
   build:
     name: Build

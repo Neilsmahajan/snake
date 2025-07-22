@@ -25,20 +25,38 @@ func ListenForInput(inputChannel chan<- types.UserInput, s *types.Snake, stopCha
 				return
 			}
 
-			if key == keyboard.KeyEsc || char == 'q' || char == 'Q' {
-				inputChannel <- types.UserInput{GamePlaying: false, Error: nil}
-				return
-			}
-
-			if (char == 'w' || char == 'k') && (s.Direction != "down") {
-				inputChannel <- types.UserInput{Direction: "up", GamePlaying: true, Error: nil}
-			} else if (char == 's' || char == 'j') && (s.Direction != "up") {
-				inputChannel <- types.UserInput{Direction: "down", GamePlaying: true, Error: nil}
-			} else if (char == 'a' || char == 'h') && (s.Direction != "right") {
-				inputChannel <- types.UserInput{Direction: "left", GamePlaying: true, Error: nil}
-			} else if (char == 'd' || char == 'l') && (s.Direction != "left") {
-				inputChannel <- types.UserInput{Direction: "right", GamePlaying: true, Error: nil}
-			}
+			handleInput(char, key, inputChannel, s)
 		}
+	}
+}
+
+func handleInput(char rune, key keyboard.Key, inputChannel chan<- types.UserInput, s *types.Snake) {
+	if key == keyboard.KeyEsc || char == 'q' || char == 'Q' {
+		inputChannel <- types.UserInput{GamePlaying: false, Error: nil}
+		return
+	}
+
+	var direction string
+	switch char {
+	case 'w', 'k':
+		if s.Direction != "down" {
+			direction = "up"
+		}
+	case 's', 'j':
+		if s.Direction != "up" {
+			direction = "down"
+		}
+	case 'a', 'h':
+		if s.Direction != "right" {
+			direction = "left"
+		}
+	case 'd', 'l':
+		if s.Direction != "left" {
+			direction = "right"
+		}
+	}
+
+	if direction != "" {
+		inputChannel <- types.UserInput{Direction: direction, GamePlaying: true, Error: nil}
 	}
 }
