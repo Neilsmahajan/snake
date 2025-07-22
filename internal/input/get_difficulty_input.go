@@ -10,6 +10,7 @@ func GetDifficultyInput() (board.Board, int, error) {
 	// Get the difficulty input from the user and return the board size and speed
 	var speed int
 	var brd board.Board
+	brd.Score = 0
 	brd.Fruits = make(map[board.FruitCoordinate]struct{})
 	fmt.Println("Welcome to the snake game written in Go!")
 

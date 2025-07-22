@@ -9,6 +9,7 @@ type Board struct {
 	Width  int
 	Height int
 	Fruits map[FruitCoordinate]struct{}
+	Score  int
 }
 
 type SnakePoint struct {
@@ -30,6 +31,8 @@ func DrawBoard(brd *Board, occupiedMap map[SnakePoint]*list.Element) {
 				// Check to see if snake eats fruit
 				if _, exists := brd.Fruits[FruitCoordinate{FruitPositionX: x, FruitPositionY: y}]; exists {
 					// ToDo: Remove fruit from the board after being eaten
+					delete(brd.Fruits, FruitCoordinate{FruitPositionX: x, FruitPositionY: y})
+					brd.Score++
 				}
 				fmt.Print("O")
 			} else if _, exists := brd.Fruits[FruitCoordinate{FruitPositionX: x, FruitPositionY: y}]; exists {

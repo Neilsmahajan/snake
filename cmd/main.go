@@ -57,4 +57,10 @@ func main() {
 
 		gamePlaying = snake.MoveSnake(brd, s)
 	}
+	fmt.Println("Game Over! Thanks for playing!")
+	if brd.Score > 0 {
+		fmt.Printf("Your score: %d\n", brd.Score)
+	} else {
+		fmt.Println("You didn't score any points.")
+	}
 }
