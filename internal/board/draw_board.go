@@ -6,8 +6,10 @@ import (
 	"github.com/neilsmahajan/snake/internal/types"
 )
 
+const clearScreenSequence = "\033[H\033[2J"
+
 func DrawBoard(brd *types.Board, s *types.Snake) {
-	fmt.Print("\033[H\033[2J") // Clear the console
+	fmt.Print(clearScreenSequence) // Clear the console
 	for y := range brd.Height {
 		for x := range brd.Width {
 			if x == 0 || x == brd.Width-1 || y == 0 || y == brd.Height-1 {
