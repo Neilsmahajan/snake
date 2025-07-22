@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  snake:
+    build: .
+    container_name: snake-game
+    stdin_open: true
+    tty: true
+    environment:
+      - TERM=xterm-256color
+    volumes:
+      - /dev/tty:/dev/tty
+    networks:
+      - snake-network
+
+networks:
+  snake-network:
+    driver: bridge
