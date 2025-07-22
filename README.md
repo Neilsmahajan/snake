@@ -273,6 +273,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Neil Mahajan**
 
 - Email: [neilsmahajan@gmail.com](mailto:neilsmahajan@gmail.com)
+- Website: [neilsmahajan.com](https://neilsmahajan.com/)
 - GitHub: [@Neilsmahajan](https://github.com/Neilsmahajan)
 - LinkedIn: [Connect with me](https://linkedin.com/in/neil-mahajan)
 
