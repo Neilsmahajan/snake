@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+	"sync"
 	"time"
 
 	"github.com/neilsmahajan/snake/internal/board"
@@ -15,7 +18,23 @@ var speed int
 
 var gamePlaying = true
 
+// resetTerminal ensures the terminal is reset to normal mode
+func resetTerminal() {
+	// Only reset if we're actually on a terminal
+	if _, err := os.Stat("/dev/tty"); err == nil {
+		// Reset terminal to normal mode
+		cmd := exec.Command("stty", "sane")
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+	}
+}
+
 func main() {
+	// Ensure terminal is reset when program exits
+	defer resetTerminal()
+	
 	var err error
 	var brd types.Board
 	brd, speed, err = input.GetDifficultyInput()
@@ -29,10 +48,19 @@ func main() {
 
 	inputChannel := make(chan types.UserInput)
 	stopChannel := make(chan struct{})
-	go input.ListenForInput(inputChannel, s, stopChannel)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		input.ListenForInput(inputChannel, s, stopChannel)
+	}()
 	ticker := time.NewTicker(time.Duration(speed) * time.Millisecond)
 	defer ticker.Stop()
-	defer close(stopChannel) // Ensure we signal the goroutine to stop
+	defer func() {
+		close(stopChannel) // Signal the goroutine to stop
+		wg.Wait()          // Wait for the goroutine to finish
+		time.Sleep(50 * time.Millisecond) // Give the terminal time to reset
+	}()
 
 	for gamePlaying {
 		board.DrawBoard(&brd, s)
