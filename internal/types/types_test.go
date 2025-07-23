@@ -70,7 +70,7 @@ func TestSnake(t *testing.T) {
 	snake := Snake{
 		Body:        list.New(),
 		OccupiedMap: make(map[Point]*list.Element),
-		Direction:   "up",
+		Direction:   DirectionUp,
 		ShouldGrow:  false,
 	}
 
@@ -80,7 +80,7 @@ func TestSnake(t *testing.T) {
 	if len(snake.OccupiedMap) != 0 {
 		t.Errorf("Snake.OccupiedMap length = %d, want 0", len(snake.OccupiedMap))
 	}
-	if snake.Direction != "up" {
+	if snake.Direction != DirectionUp {
 		t.Errorf("Snake.Direction = %s, want 'up'", snake.Direction)
 	}
 	if snake.ShouldGrow {
@@ -98,11 +98,11 @@ func TestUserInput(t *testing.T) {
 		{
 			name: "Valid input",
 			input: UserInput{
-				Direction:   "up",
+				Direction:   DirectionUp,
 				GamePlaying: true,
 				Error:       nil,
 			},
-			direction: "up",
+			direction: DirectionUp,
 			playing:   true,
 		},
 		{

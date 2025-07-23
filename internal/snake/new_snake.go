@@ -10,7 +10,7 @@ func NewSnake(brd types.Board) *types.Snake {
 	s := &types.Snake{
 		Body:        list.New(),
 		OccupiedMap: make(map[types.Point]*list.Element),
-		Direction:   "still",
+		Direction:   types.DirectionStill,
 	}
 	start := types.Point{X: brd.Width / 2, Y: brd.Height / 2}
 	e := s.Body.PushFront(start)

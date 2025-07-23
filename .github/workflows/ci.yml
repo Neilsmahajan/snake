@@ -69,7 +69,7 @@ jobs:
         uses: golangci/golangci-lint-action@v4
         with:
           version: v1.64.8
-          args: --config=.golangci-simple.yml --timeout=5m
+          args: --config=.golangci.yml --timeout=5m
 
   security:
     name: Security Scan

@@ -6,7 +6,7 @@ import (
 )
 
 func MoveSnake(brd *types.Board, s *types.Snake) bool {
-	if s.Direction == "still" {
+	if s.Direction == types.DirectionStill {
 		return true // No movement, just return
 	}
 
@@ -14,13 +14,13 @@ func MoveSnake(brd *types.Board, s *types.Snake) bool {
 	var newHead types.Point
 
 	switch s.Direction {
-	case "up":
+	case types.DirectionUp:
 		newHead = types.Point{X: head.X, Y: head.Y - 1}
-	case "down":
+	case types.DirectionDown:
 		newHead = types.Point{X: head.X, Y: head.Y + 1}
-	case "left":
+	case types.DirectionLeft:
 		newHead = types.Point{X: head.X - 1, Y: head.Y}
-	case "right":
+	case types.DirectionRight:
 		newHead = types.Point{X: head.X + 1, Y: head.Y}
 	default:
 		return false // Invalid direction

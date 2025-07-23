@@ -2,6 +2,15 @@ package types
 
 import "container/list"
 
+// Direction constants
+const (
+	DirectionUp    = "up"
+	DirectionDown  = "down"
+	DirectionLeft  = "left"
+	DirectionRight = "right"
+	DirectionStill = "still"
+)
+
 // Point represents a coordinate on the game board
 type Point struct {
 	X int
