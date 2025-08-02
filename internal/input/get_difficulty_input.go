@@ -11,8 +11,8 @@ func displayWelcomeScreen() {
 	fmt.Print(types.ClearScreen)
 	fmt.Printf("%s%s", types.ColorBold, types.ColorGreen)
 	fmt.Println("╔══════════════════════════════════════╗")
-	fmt.Println("║          🐍 SNAKE GAME 🐍           ║")
-	fmt.Println("║      Written in Go Language         ║")
+	fmt.Println("║           🐍 SNAKE GAME 🐍           ║")
+	fmt.Println("║       Written in Go Language         ║")
 	fmt.Println("╚══════════════════════════════════════╝")
 	fmt.Printf("%s\n", types.ColorReset)
 }
