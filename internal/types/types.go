@@ -17,6 +17,16 @@ type Point struct {
 	Y int
 }
 
+// CellType represents the type of content in a board cell
+type CellType int
+
+const (
+	CellWall CellType = iota
+	CellSnake
+	CellFruit
+	CellEmpty
+)
+
 // Board represents the game board
 type Board struct {
 	Width  int
