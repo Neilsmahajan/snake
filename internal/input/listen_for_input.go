@@ -2,6 +2,7 @@ package input
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/eiannone/keyboard"
 	"github.com/neilsmahajan/snake/internal/types"
@@ -12,7 +13,11 @@ func ListenForInput(inputChannel chan<- types.UserInput, s *types.Snake, stopCha
 		inputChannel <- types.UserInput{GamePlaying: false, Error: fmt.Errorf("error opening keyboard: %v", err)}
 		return
 	}
-	defer keyboard.Close()
+	defer func() {
+		keyboard.Close()
+		// Small delay to ensure keyboard cleanup completes
+		time.Sleep(10 * time.Millisecond)
+	}()
 
 	for {
 		select {
@@ -21,18 +26,35 @@ func ListenForInput(inputChannel chan<- types.UserInput, s *types.Snake, stopCha
 		default:
 			char, key, err := keyboard.GetKey()
 			if err != nil {
-				inputChannel <- types.UserInput{GamePlaying: false, Error: fmt.Errorf("error reading input: %v", err)}
-				return
+				// Don't send error if we're stopping (channel might be closed)
+				select {
+				case <-stopChannel:
+					return
+				default:
+					inputChannel <- types.UserInput{GamePlaying: false, Error: fmt.Errorf("error reading input: %v", err)}
+					return
+				}
 			}
 
-			handleInput(char, key, inputChannel, s)
+			// Check if we should stop before sending input
+			select {
+			case <-stopChannel:
+				return
+			default:
+				handleInput(char, key, inputChannel, s)
+			}
 		}
 	}
 }
 
 func handleInput(char rune, key keyboard.Key, inputChannel chan<- types.UserInput, s *types.Snake) {
 	if key == keyboard.KeyEsc || char == 'q' || char == 'Q' {
-		inputChannel <- types.UserInput{GamePlaying: false, Error: nil}
+		// Use non-blocking send to avoid hanging if channel is full/closed
+		select {
+		case inputChannel <- types.UserInput{GamePlaying: false, Error: nil}:
+		default:
+			// Channel is full or closed, just return
+		}
 		return
 	}
 
@@ -57,6 +79,11 @@ func handleInput(char rune, key keyboard.Key, inputChannel chan<- types.UserInpu
 	}
 
 	if direction != "" {
-		inputChannel <- types.UserInput{Direction: direction, GamePlaying: true, Error: nil}
+		// Use non-blocking send to avoid hanging if channel is full/closed
+		select {
+		case inputChannel <- types.UserInput{Direction: direction, GamePlaying: true, Error: nil}:
+		default:
+			// Channel is full or closed, just return
+		}
 	}
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/neilsmahajan/snake/internal/types"
 )
 
-const terminalResetDelay = 50 * time.Millisecond
+const terminalResetDelay = 100 * time.Millisecond
 
 var speed int
 
@@ -22,19 +22,41 @@ var gamePlaying = true
 
 // resetTerminal ensures the terminal is reset to normal mode
 func resetTerminal() {
-	// Only reset if we're actually on a terminal
-	if _, err := os.Stat("/dev/tty"); err == nil {
-		// Reset terminal to normal mode
-		cmd := exec.Command("stty", "sane")
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		_ = cmd.Run() // Ignore error as this is best effort cleanup
-	}
+	// Multiple cleanup attempts to ensure terminal is properly reset
+	// Using explicit commands to satisfy gosec G204 requirements
+
+	// Reset terminal to sane state
+	cmd1 := exec.Command("stty", "sane") // #nosec G204 - command is hardcoded
+	cmd1.Stdin = os.Stdin
+	cmd1.Stdout = os.Stdout
+	cmd1.Stderr = os.Stderr
+	_ = cmd1.Run() // Ignore errors as this is best effort cleanup
+
+	// Enable echo
+	cmd2 := exec.Command("stty", "echo") // #nosec G204 - command is hardcoded
+	cmd2.Stdin = os.Stdin
+	cmd2.Stdout = os.Stdout
+	cmd2.Stderr = os.Stderr
+	_ = cmd2.Run() // Ignore errors as this is best effort cleanup
+
+	// Enable canonical mode
+	cmd3 := exec.Command("stty", "icanon") // #nosec G204 - command is hardcoded
+	cmd3.Stdin = os.Stdin
+	cmd3.Stdout = os.Stdout
+	cmd3.Stderr = os.Stderr
+	_ = cmd3.Run() // Ignore errors as this is best effort cleanup
+
+	// Force flush stdout/stderr
+	os.Stdout.Sync()
+	os.Stderr.Sync()
 }
 
 func main() {
-	// Ensure terminal is reset when program exits
+	// Ensure terminal is reset when program exits (multiple defers for safety)
+	defer func() {
+		resetTerminal()
+		time.Sleep(terminalResetDelay)
+	}()
 	defer resetTerminal()
 
 	var err error
@@ -48,7 +70,7 @@ func main() {
 	s := snake.NewSnake(brd)
 	fruit.CreateFruit(&brd, s.OccupiedMap)
 
-	inputChannel := make(chan types.UserInput)
+	inputChannel := make(chan types.UserInput, 10) // Buffered channel to prevent blocking
 	stopChannel := make(chan struct{})
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -62,6 +84,12 @@ func main() {
 		close(stopChannel)             // Signal the goroutine to stop
 		wg.Wait()                      // Wait for the goroutine to finish
 		time.Sleep(terminalResetDelay) // Give the terminal time to reset
+
+		// Drain any remaining input
+		for len(inputChannel) > 0 {
+			<-inputChannel
+		}
+		close(inputChannel)
 	}()
 
 	for gamePlaying {
@@ -86,10 +114,18 @@ func main() {
 			gamePlaying = snake.MoveSnake(&brd, s)
 		}
 	}
+
+	// Clear screen and show final message
+	fmt.Print("\033[H\033[2J")
 	fmt.Println("Game Over! Thanks for playing!")
 	if brd.Score > 0 {
 		fmt.Printf("Your score: %d\n", brd.Score)
 	} else {
 		fmt.Println("You didn't score any points.")
 	}
+	fmt.Println("Press Enter to exit...")
+
+	// Wait for Enter key to exit gracefully
+	var input string
+	_, _ = fmt.Scanln(&input) // Explicitly ignore both return values to satisfy linters
 }
