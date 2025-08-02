@@ -14,7 +14,7 @@ func ListenForInput(inputChannel chan<- types.UserInput, s *types.Snake, stopCha
 		return
 	}
 	defer func() {
-		keyboard.Close()
+		_ = keyboard.Close() // #nosec G104 - keyboard cleanup, error doesn't affect game flow
 		// Small delay to ensure keyboard cleanup completes
 		time.Sleep(10 * time.Millisecond)
 	}()

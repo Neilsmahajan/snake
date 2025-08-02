@@ -47,8 +47,8 @@ func resetTerminal() {
 	_ = cmd3.Run() // Ignore errors as this is best effort cleanup
 
 	// Force flush stdout/stderr
-	os.Stdout.Sync()
-	os.Stderr.Sync()
+	_ = os.Stdout.Sync() // #nosec G104 - stdout sync, error doesn't affect cleanup
+	_ = os.Stderr.Sync() // #nosec G104 - stderr sync, error doesn't affect cleanup
 }
 
 func main() {

@@ -23,7 +23,8 @@ linters-settings:
   gocyclo:
     min-complexity: 15
   govet:
-    check-shadowing: true
+    enable:
+      - shadow # Enable shadow checking instead of deprecated check-shadowing
   lll:
     line-length: 140
   maligned:
