@@ -6,8 +6,6 @@ import (
 	"github.com/neilsmahajan/snake/internal/types"
 )
 
-const clearScreenSequence = "\033[H\033[2J"
-
 // getCellType determines what type of content is at the given position
 func getCellType(x, y int, brd *types.Board, s *types.Snake) types.CellType {
 	// Check for wall (border)
@@ -32,21 +30,31 @@ func getCellType(x, y int, brd *types.Board, s *types.Snake) types.CellType {
 }
 
 func DrawBoard(brd *types.Board, s *types.Snake) {
-	fmt.Print(clearScreenSequence) // Clear the console
+	fmt.Print(types.ClearScreen) // Clear the console
+
+	// Display score and game info
+	fmt.Printf("%s%s🐍 SNAKE GAME 🐍%s\n", types.ColorBold, types.ColorGreen, types.ColorReset)
+	fmt.Printf("%sScore: %s%d%s\n", types.ColorCyan, types.ColorYellow, brd.Score, types.ColorReset)
+	fmt.Println()
+
 	for y := range brd.Height {
 		for x := range brd.Width {
 			cellType := getCellType(x, y, brd, s)
 			switch cellType {
 			case types.CellWall:
-				fmt.Print("#")
+				fmt.Printf("%s%s%s", types.ColorBlue, types.WallSymbol, types.ColorReset)
 			case types.CellSnake:
-				fmt.Print("O")
+				fmt.Printf("%s%s%s", types.ColorGreen, types.SnakeSymbol, types.ColorReset)
 			case types.CellFruit:
-				fmt.Print("F")
+				fmt.Printf("%s%s%s", types.ColorRed, types.FruitSymbol, types.ColorReset)
 			case types.CellEmpty:
-				fmt.Print(" ")
+				fmt.Print(types.EmptySymbol)
 			}
 		}
 		println()
 	}
+
+	// Display controls at the bottom
+	fmt.Printf("\n%s%sControls:%s %sW/K↑ S/J↓ A/H← D/L→ Q/ESC=Quit%s\n",
+		types.ColorBold, types.ColorCyan, types.ColorReset, types.ColorWhite, types.ColorReset)
 }

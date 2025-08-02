@@ -14,7 +14,9 @@ import (
 	"github.com/neilsmahajan/snake/internal/types"
 )
 
-const terminalResetDelay = 100 * time.Millisecond
+const (
+	terminalResetDelay = 100 * time.Millisecond
+)
 
 var speed int
 
@@ -51,25 +53,22 @@ func resetTerminal() {
 	_ = os.Stderr.Sync() // #nosec G104 - stderr sync, error doesn't affect cleanup
 }
 
-func main() {
-	// Ensure terminal is reset when program exits (multiple defers for safety)
-	defer func() {
-		resetTerminal()
-		time.Sleep(terminalResetDelay)
-	}()
-	defer resetTerminal()
-
-	var err error
-	var brd types.Board
-	brd, speed, err = input.GetDifficultyInput()
+// setupGame initializes the game board and snake
+func setupGame() (types.Board, *types.Snake, error) {
+	brd, gameSpeed, err := input.GetDifficultyInput()
 	if err != nil {
-		fmt.Printf("Error getting difficulty input: %v\n", err)
-		return
+		return types.Board{}, nil, fmt.Errorf("error getting difficulty input: %v", err)
 	}
+	speed = gameSpeed
 
 	s := snake.NewSnake(brd)
 	fruit.CreateFruit(&brd, s.OccupiedMap)
 
+	return brd, s, nil
+}
+
+// runGameLoop runs the main game loop
+func runGameLoop(brd *types.Board, s *types.Snake) {
 	inputChannel := make(chan types.UserInput, 10) // Buffered channel to prevent blocking
 	stopChannel := make(chan struct{})
 	var wg sync.WaitGroup
@@ -93,7 +92,7 @@ func main() {
 	}()
 
 	for gamePlaying {
-		board.DrawBoard(&brd, s)
+		board.DrawBoard(brd, s)
 
 		select {
 		case userInput := <-inputChannel:
@@ -111,21 +110,72 @@ func main() {
 			if !gamePlaying {
 				break
 			}
-			gamePlaying = snake.MoveSnake(&brd, s)
+			gamePlaying = snake.MoveSnake(brd, s)
 		}
 	}
+}
 
+// showGameOverScreen displays the final score and game over message
+func showGameOverScreen(brd *types.Board) {
 	// Clear screen and show final message
 	fmt.Print("\033[H\033[2J")
-	fmt.Println("Game Over! Thanks for playing!")
+
+	// Game Over banner
+	fmt.Printf("%s%s", types.ColorBold, types.ColorRed)
+	fmt.Println("╔══════════════════════════════════════╗")
+	fmt.Println("║             GAME OVER!               ║")
+	fmt.Println("╚══════════════════════════════════════╝")
+	fmt.Printf("%s\n", types.ColorReset)
+
+	// Score display
 	if brd.Score > 0 {
-		fmt.Printf("Your score: %d\n", brd.Score)
+		fmt.Printf("%s🏆 Final Score: %s%s%d%s%s\n\n",
+			types.ColorYellow, types.ColorBold, types.ColorGreen, brd.Score, types.ColorReset, types.ColorYellow)
+
+		// Score rating
+		switch {
+		case brd.Score >= 50:
+			fmt.Printf("%s🌟 Amazing! You're a Snake Master! 🌟%s\n", types.ColorGreen, types.ColorReset)
+		case brd.Score >= 30:
+			fmt.Printf("%s⭐ Great job! You're getting good! ⭐%s\n", types.ColorCyan, types.ColorReset)
+		case brd.Score >= 15:
+			fmt.Printf("%s✨ Not bad! Keep practicing! ✨%s\n", types.ColorYellow, types.ColorReset)
+		case brd.Score >= 5:
+			fmt.Printf("%s🎯 Good start! Try again! 🎯%s\n", types.ColorBlue, types.ColorReset)
+		default:
+			fmt.Printf("%s🎮 Keep trying! You'll get better! 🎮%s\n", types.ColorPurple, types.ColorReset)
+		}
 	} else {
-		fmt.Println("You didn't score any points.")
+		fmt.Printf("%s😔 No points scored this time!%s\n", types.ColorRed, types.ColorReset)
+		fmt.Printf("%s💪 Don't give up - try again! 💪%s\n", types.ColorGreen, types.ColorReset)
 	}
-	fmt.Println("Press Enter to exit...")
+
+	fmt.Printf("\n%sThanks for playing Snake! 🐍%s\n", types.ColorCyan, types.ColorReset)
+	fmt.Printf("%sPress %sENTER%s to exit...%s\n", types.ColorWhite, types.ColorGreen, types.ColorWhite, types.ColorReset)
 
 	// Wait for Enter key to exit gracefully
 	var input string
 	_, _ = fmt.Scanln(&input) // Explicitly ignore both return values to satisfy linters
+}
+
+func main() {
+	// Ensure terminal is reset when program exits (multiple defers for safety)
+	defer func() {
+		resetTerminal()
+		time.Sleep(terminalResetDelay)
+	}()
+	defer resetTerminal()
+
+	// Setup the game
+	brd, s, err := setupGame()
+	if err != nil {
+		fmt.Printf("Error setting up game: %v\n", err)
+		return
+	}
+
+	// Run the main game loop
+	runGameLoop(&brd, s)
+
+	// Show game over screen
+	showGameOverScreen(&brd)
 }
